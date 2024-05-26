@@ -12,8 +12,8 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 
 # Load configuration file
-CONFIG_FILE = os.path.expanduser('~/pavlovserver008/Pavlov/Saved/Config/ModSave/cash_config.json')
-ITEMS_FILE = os.path.expanduser('~/pavlovserver008/Pavlov/Saved/Config/ModSave/items.json')
+CONFIG_FILE = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/cash_config.json')
+ITEMS_FILE = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/items.json')
 
 def load_config():
     with open(CONFIG_FILE, 'r') as file:
@@ -41,7 +41,9 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 # List of authorized user IDs
 AUTHORIZED_USER_IDS = [
-    407796281570754560  # Replace with actual user IDs
+    000000000000000000000,  # Replace with admin discord ID's
+    000000000000000000001,
+    000000000000000000002
 ]
 
 def count_ghost_items(user_data):
@@ -82,7 +84,7 @@ async def setluck(ctx, new_luck_value: int):
 async def drop(ctx):
     if ctx.author.id in AUTHORIZED_USER_IDS:
         try:
-            directory = os.path.expanduser('/home/shack/pavlovserver008/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
+            directory = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
             cash_value = load_config()['cash_value']
             missed_out_message = ""
             updated_message = ""
@@ -165,7 +167,7 @@ async def setinterval(ctx, hours: int):
             save_config(config)
 
             # Update crontab
-            subprocess.run(['/home/shack/pavlovserver008/Pavlov/Saved/Config/ModSave/update_crontab.sh'], check=True)
+            subprocess.run(['~/~pavlovserver/Pavlov/Saved/Config/ModSave/update_crontab.sh'], check=True)
 
             await ctx.send(f'Drop interval updated to {hours} hours')
         except Exception as e:
@@ -177,7 +179,7 @@ async def setinterval(ctx, hours: int):
 async def resetcash(ctx):
     if ctx.author.id in AUTHORIZED_USER_IDS:
         try:
-            directory = os.path.expanduser('/home/shack/pavlovserver008/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
+            directory = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
             for filename in os.listdir(directory):
                 if filename.endswith('.json'):
                     file_path = os.path.join(directory, filename)
@@ -202,7 +204,7 @@ async def giveitem(ctx, user_id: str, item: str):
             return
 
         try:
-            directory = os.path.expanduser('/home/shack/pavlovserver008/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
+            directory = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
             user_found = False
             for filename in os.listdir(directory):
                 if filename.endswith('.json'):
@@ -229,7 +231,7 @@ async def giveitem(ctx, user_id: str, item: str):
 async def resetusercash(ctx, user_id: str):
     if ctx.author.id in AUTHORIZED_USER_IDS:
         try:
-            directory = os.path.expanduser('/home/shack/pavlovserver008/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
+            directory = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
             user_found = False
             for filename in os.listdir(directory):
                 if filename.endswith('.json'):
@@ -255,7 +257,7 @@ async def resetusercash(ctx, user_id: str):
 async def listusers(ctx):
     if ctx.author.id in AUTHORIZED_USER_IDS:
         try:
-            directory = os.path.expanduser('/home/shack/pavlovserver008/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
+            directory = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
             user_list = []
             for filename in os.listdir(directory):
                 if filename.endswith('.json'):
@@ -294,7 +296,7 @@ async def listusers(ctx):
 async def removeitem(ctx, user_id: str, item: str):
     if ctx.author.id in AUTHORIZED_USER_IDS:
         try:
-            directory = os.path.expanduser('/home/shack/pavlovserver008/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
+            directory = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
             user_found = False
             for filename in os.listdir(directory):
                 if filename.endswith('.json'):
@@ -324,7 +326,7 @@ async def removeitem(ctx, user_id: str, item: str):
 async def removeitems(ctx, user_id: str):
     if ctx.author.id in AUTHORIZED_USER_IDS:
         try:
-            directory = os.path.expanduser('/home/shack/pavlovserver008/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
+            directory = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
             user_found = False
             for filename in os.listdir(directory):
                 if filename.endswith('.json'):
