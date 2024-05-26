@@ -2,7 +2,7 @@ import discord
 import json
 import os
 import subprocess
-from discord.ext import commands
+from discord.ext import commands, tasks
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 
@@ -10,10 +10,24 @@ from datetime import datetime, timedelta
 load_dotenv()
 
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
+BOT_VERSION = os.getenv('BOT_VERSION')
+BOT_URL = os.getenv('BOT_URL')
+WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK_URL')
+LOG_FILE = "/home/shack/pavlovserver008/Pavlov/Saved/Logs/Pavlov.log"
+
+# Set the base directory
+BASE_DIR = "/home/shack/pavlovserver008/Pavlov/Saved/Config/ModSave"
 
 # Load configuration file
-CONFIG_FILE = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/cash_config.json')
-ITEMS_FILE = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/items.json')
+CONFIG_FILE = os.path.join(BASE_DIR, 'cash_config.json')
+
+# Load items from items.json
+ITEMS_FILE = os.path.join(BASE_DIR, 'items.json')
+with open(ITEMS_FILE, 'r') as file:
+    items_data = json.load(file)
+
+GHOST_ITEMS = items_data['ghost_items']
+ALL_ITEMS = items_data['all_items']
 
 def load_config():
     with open(CONFIG_FILE, 'r') as file:
@@ -22,15 +36,6 @@ def load_config():
 def save_config(config):
     with open(CONFIG_FILE, 'w') as file:
         json.dump(config, file, indent=4)
-
-def load_items():
-    with open(ITEMS_FILE, 'r') as file:
-        return json.load(file)
-
-# Load items from the JSON file
-items_data = load_items()
-GHOST_ITEMS = items_data['ghost_items']
-ITEMS_LIST = items_data['items_list']
 
 # Define the intents
 intents = discord.Intents.default()
@@ -41,17 +46,43 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 # List of authorized user IDs
 AUTHORIZED_USER_IDS = [
-    000000000000000000000,  # Replace with admin discord ID's
-    000000000000000000001,
-    000000000000000000002
+    407796281570754560  # Replace with actual user IDs
 ]
 
 def count_ghost_items(user_data):
     return sum(1 for item in user_data.get('OwnedSkins', []) if item in GHOST_ITEMS)
 
+def update_last_active(user):
+    directory = os.path.join(BASE_DIR, 'WeaponSkinPack', 'playerdata')
+    for filename in os.listdir(directory):
+        if filename.endswith('.json'):
+            file_path = os.path.join(directory, filename)
+            try:
+                with open(file_path, 'r') as file:
+                    data = json.load(file)
+                if user in data:
+                    data[user]['last_value_change'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+                    data[user].setdefault('connection_history', []).append(datetime.now().strftime('%Y-%m-%dT%H:%M:%S'))
+                    with open(file_path, 'w') as file:
+                        json.dump(data, file, indent=4)
+            except (json.JSONDecodeError, FileNotFoundError):
+                continue
+
 @bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user}')
+    await bot.change_presence(activity=discord.Game(name=f"v{BOT_VERSION} | {BOT_URL}"))
+    monitor_log.start()
+
+@tasks.loop(seconds=60)
+async def monitor_log():
+    print("Checking log file for join events...")
+    with open(LOG_FILE, 'r') as file:
+        lines = file.readlines()
+        for line in lines:
+            if "LogNet: Join succeeded:" in line:
+                user = line.split("LogNet: Join succeeded:")[1].strip()
+                update_last_active(user)
 
 @bot.command()
 async def setcash(ctx, new_cash_value: int):
@@ -84,7 +115,7 @@ async def setluck(ctx, new_luck_value: int):
 async def drop(ctx):
     if ctx.author.id in AUTHORIZED_USER_IDS:
         try:
-            directory = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
+            directory = os.path.join(BASE_DIR, 'WeaponSkinPack', 'playerdata')
             cash_value = load_config()['cash_value']
             missed_out_message = ""
             updated_message = ""
@@ -96,41 +127,46 @@ async def drop(ctx):
             for filename in os.listdir(directory):
                 if filename.endswith('.json'):
                     file_path = os.path.join(directory, filename)
-                    with open(file_path, 'r') as file:
-                        data = json.load(file)
+                    try:
+                        with open(file_path, 'r') as file:
+                            data = json.load(file)
+                    except (json.JSONDecodeError, FileNotFoundError):
+                        continue
 
                     for user, user_data in data.items():
-                        last_value_change = datetime.strptime(user_data.get('last_value_change', '1970-01-01T00:00:00'), '%Y-%m-%dT%H:%M:%S')
-                        if last_value_change > threshold_time:
-                            user_data['Cash'] += cash_value
-                            eligible_users.append(user)
-                            updated_message += f"{user} had {user_data['Cash'] - cash_value} cash, now has {user_data['Cash']} cash. Ghost Items: {count_ghost_items(user_data)}/25\n"
-                        else:
-                            missed_out_message += f"{user} missed out. Ghost Items: {count_ghost_items(user_data)}/25\n"
+                        if 'Cash' in user_data and user:
+                            last_value_change = datetime.strptime(user_data.get('last_value_change', '1970-01-01T00:00:00'), '%Y-%m-%dT%H:%M:%S')
+                            if last_value_change > threshold_time:
+                                user_data['Cash'] += cash_value
+                                eligible_users.append(user)
+                                updated_message += f":money_mouth: {user} had {user_data['Cash'] - cash_value} cash, now has {user_data['Cash']} cash. :moneybag:\n"
+                            else:
+                                missed_out_message += f"{user} missed out. Ghost Items: {count_ghost_items(user_data)}/25\n"
 
                     with open(file_path, 'w') as file:
                         json.dump(data, file, indent=4)
 
             # Create webhook message
             if eligible_users:
-                webhook_message = "SKIN MENU CASH DROP\n"
-                for user in eligible_users[:15]:
-                    webhook_message += f"{user} received {cash_value} cash.\n"
-                webhook_message += missed_out_message
+                webhook_message = "SKIN MENU CASH DROP\n" + updated_message + missed_out_message
 
                 # Escape special characters for JSON
                 escaped_message = json.dumps({"content": None, "embeds": [{"title": "Cash Update", "description": webhook_message}]})
 
                 # Send the message to Discord
-                subprocess.run(['curl', '-H', 'Content-Type: application/json', '-X', 'POST', '-d', escaped_message, os.getenv('DISCORD_WEBHOOK_URL')], check=True)
+                subprocess.run(['curl', '-H', 'Content-Type: application/json', '-X', 'POST', '-d', escaped_message, WEBHOOK_URL], check=True)
 
             # Create full list of users
             user_list = []
             for filename in os.listdir(directory):
                 if filename.endswith('.json'):
                     file_path = os.path.join(directory, filename)
-                    with open(file_path, 'r') as file:
-                        data = json.load(file)
+                    try:
+                        with open(file_path, 'r') as file:
+                            data = json.load(file)
+                    except (json.JSONDecodeError, FileNotFoundError):
+                        continue
+
                     for user, user_data in data.items():
                         last_value_change = user_data.get('last_value_change', 'Never')
                         cash = user_data.get('Cash', 0)
@@ -167,11 +203,11 @@ async def setinterval(ctx, hours: int):
             save_config(config)
 
             # Update crontab
-            subprocess.run(['~/~pavlovserver/Pavlov/Saved/Config/ModSave/update_crontab.sh'], check=True)
+            subprocess.run([os.path.join(BASE_DIR, 'update_crontab.sh')], check=True)
 
             await ctx.send(f'Drop interval updated to {hours} hours')
         except Exception as e:
-            await ctx.send(f'Error: {e}')
+            await ctx.send('Error: {e}')
     else:
         await ctx.send('You do not have permission to use this command.')
 
@@ -179,15 +215,20 @@ async def setinterval(ctx, hours: int):
 async def resetcash(ctx):
     if ctx.author.id in AUTHORIZED_USER_IDS:
         try:
-            directory = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
+            directory = os.path.join(BASE_DIR, 'WeaponSkinPack', 'playerdata')
             for filename in os.listdir(directory):
                 if filename.endswith('.json'):
                     file_path = os.path.join(directory, filename)
-                    with open(file_path, 'r') as file:
-                        data = json.load(file)
+                    try:
+                        with open(file_path, 'r') as file:
+                            data = json.load(file)
+                    except (json.JSONDecodeError, FileNotFoundError):
+                        continue
+
                     for user_data in data.values():
-                        user_data['Cash'] = 0
-                        user_data['last_value_change'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+                        if 'Cash' in user_data:
+                            user_data['Cash'] = 0
+                            user_data['last_value_change'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
                     with open(file_path, 'w') as file:
                         json.dump(data, file, indent=4)
             await ctx.send('All user cash values have been reset to 0.')
@@ -199,18 +240,22 @@ async def resetcash(ctx):
 @bot.command()
 async def giveitem(ctx, user_id: str, item: str):
     if ctx.author.id in AUTHORIZED_USER_IDS:
-        if item not in ITEMS_LIST:
+        if item not in ALL_ITEMS:
             await ctx.send(f'Invalid item: {item}')
             return
 
         try:
-            directory = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
+            directory = os.path.join(BASE_DIR, 'WeaponSkinPack', 'playerdata')
             user_found = False
             for filename in os.listdir(directory):
                 if filename.endswith('.json'):
                     file_path = os.path.join(directory, filename)
-                    with open(file_path, 'r') as file:
-                        data = json.load(file)
+                    try:
+                        with open(file_path, 'r') as file:
+                            data = json.load(file)
+                    except (json.JSONDecodeError, FileNotFoundError):
+                        continue
+
                     if user_id in data:
                         user_data = data[user_id]
                         user_data.setdefault('OwnedSkins', []).append(item)
@@ -231,13 +276,17 @@ async def giveitem(ctx, user_id: str, item: str):
 async def resetusercash(ctx, user_id: str):
     if ctx.author.id in AUTHORIZED_USER_IDS:
         try:
-            directory = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
+            directory = os.path.join(BASE_DIR, 'WeaponSkinPack', 'playerdata')
             user_found = False
             for filename in os.listdir(directory):
                 if filename.endswith('.json'):
                     file_path = os.path.join(directory, filename)
-                    with open(file_path, 'r') as file:
-                        data = json.load(file)
+                    try:
+                        with open(file_path, 'r') as file:
+                            data = json.load(file)
+                    except (json.JSONDecodeError, FileNotFoundError):
+                        continue
+
                     if user_id in data:
                         user_data = data[user_id]
                         user_data['Cash'] = 0
@@ -257,13 +306,17 @@ async def resetusercash(ctx, user_id: str):
 async def listusers(ctx):
     if ctx.author.id in AUTHORIZED_USER_IDS:
         try:
-            directory = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
+            directory = os.path.join(BASE_DIR, 'WeaponSkinPack', 'playerdata')
             user_list = []
             for filename in os.listdir(directory):
                 if filename.endswith('.json'):
                     file_path = os.path.join(directory, filename)
-                    with open(file_path, 'r') as file:
-                        data = json.load(file)
+                    try:
+                        with open(file_path, 'r') as file:
+                            data = json.load(file)
+                    except (json.JSONDecodeError, FileNotFoundError):
+                        continue
+
                     for user, user_data in data.items():
                         last_value_change = user_data.get('last_value_change', 'Never')
                         cash = user_data.get('Cash', 0)
@@ -273,13 +326,7 @@ async def listusers(ctx):
                         user_list.append(f'User: {user}\nCash: {cash}\nItems: {items}\nLast Paid: {last_value_change}\nGhost Items: {ghost_item_count}/25\nConnection History: {connection_history}\n')
 
             if user_list:
-                # Send user list as an embed
-                embed = discord.Embed(title="User List")
-                embed.description = "\n".join(user_list[:2048])  # Limit to Discord's embed character limit
-
-                await ctx.send(embed=embed)
-
-                # Save full user list to a text file
+                # Save user list to a text file
                 with open('user_list.txt', 'w') as f:
                     f.write("\n".join(user_list))
 
@@ -296,13 +343,17 @@ async def listusers(ctx):
 async def removeitem(ctx, user_id: str, item: str):
     if ctx.author.id in AUTHORIZED_USER_IDS:
         try:
-            directory = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
+            directory = os.path.join(BASE_DIR, 'WeaponSkinPack', 'playerdata')
             user_found = False
             for filename in os.listdir(directory):
                 if filename.endswith('.json'):
                     file_path = os.path.join(directory, filename)
-                    with open(file_path, 'r') as file:
-                        data = json.load(file)
+                    try:
+                        with open(file_path, 'r') as file:
+                            data = json.load(file)
+                    except (json.JSONDecodeError, FileNotFoundError):
+                        continue
+
                     if user_id in data:
                         user_data = data[user_id]
                         if item in user_data.get('OwnedSkins', []):
@@ -326,13 +377,17 @@ async def removeitem(ctx, user_id: str, item: str):
 async def removeitems(ctx, user_id: str):
     if ctx.author.id in AUTHORIZED_USER_IDS:
         try:
-            directory = os.path.expanduser('~/~pavlovserver/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata')
+            directory = os.path.join(BASE_DIR, 'WeaponSkinPack', 'playerdata')
             user_found = False
             for filename in os.listdir(directory):
                 if filename.endswith('.json'):
                     file_path = os.path.join(directory, filename)
-                    with open(file_path, 'r') as file:
-                        data = json.load(file)
+                    try:
+                        with open(file_path, 'r') as file:
+                            data = json.load(file)
+                    except (json.JSONDecodeError, FileNotFoundError):
+                        continue
+
                     if user_id in data:
                         user_data = data[user_id]
                         user_data['OwnedSkins'] = []
