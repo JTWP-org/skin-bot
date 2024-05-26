@@ -1,0 +1,39 @@
+{
+    "ghost_items": [
+        "knife_ghost", "57_ghost", "m4_ghost", "ak47_ghost", "1911_ghost", "akshorty_ghost",
+        "ar9_ghost", "ump_ghost", "aug_ghost", "awp_ghost", "de_ghost", "autosniper_ghost",
+        "galil_ghost", "glock_ghost", "huntingrifle_ghost", "knife_ghost_generic", "kriss_ghost",
+        "m9_ghost", "revolver_ghost", "m16_ghost", "vanas_ghost", "cet9_ghost", "supp_rifle_ghost",
+        "holo_ghost", "p90_ghost"
+    ],
+    "all_items": [
+        "p90_stock", "bomb_stock", "ump_stock", "holo_stock", "supp_rifle_stock",
+        "m9_stock", "vanas_stock", "m4_stock", "m16_stock", "1911_stock", "de_stock",
+        "sock_stock", "ak47_stock", "aug_stock", "galil_stock", "autosniper_stock",
+        "awp_stock", "shotgun_stock", "akshorty_stock", "ar9_stock", "kriss_stock",
+        "huntingrifle_stock", "revolver_stock", "57_stock", "cet9_stock", "knife_stock",
+        "m4_slaughterhouse", "m4_scooby", "57_Hyperbeast", "awp_hyperbeast", "ak47_hyperbeast",
+        "ak47_zeph", "m16_booster", "m16_supreme", "m16_baja", "ump_marble", "m16_swirl",
+        "knife_elijah", "knife_ghost", "revolver_rusty", "revolver_toy", "revolver_reliable",
+        "revolver_watergun", "revolver_riches", "revolver_firebite", "m4_nitro", "m4_mark",
+        "m4_klair", "m4_redgold", "m4_shoju", "m4_gucci", "m4_nova", "de_skill", "de_iseeu",
+        "de_zombie", "de_goldslate", "de_catcannon", "glock_black", "glock_glock19",
+        "glock_fadeglock", "glock_redbeast", "glock_gucci", "ak47_icey", "ak47_hunter",
+        "ak47_goldtrim", "ak47_chalk", "ak47_engravedgold", "awp_carelesswhisper", "vanas_miku",
+        "vanas_decommissioned", "1911_bumble", "1911_jared", "1911_goldaccent", "akshorty_macdonalt",
+        "akshorty_meta", "ar9_viper", "aug_nuke", "aug_realaug", "autosniper_woodg3",
+        "autosniper_rosegold", "shotgun_hunting", "shotgun_mango", "shotgun_gold", "shotgun_diamond",
+        "galil_skillissue", "galil_galol", "huntingrifle_wood", "huntingrifle_ivory", "kriss_rusty",
+        "m9_goku", "m9_m9a3", "57_chrome", "57_cheese", "cet9_demonic", "cet9_disco",
+        "p90_cares", "supp_rifle_copper", "bomb_swat", "bomb_tnt", "bomb_stone", "holo_blue",
+        "holo_gold", "57_grid", "57_ghost", "m4_grid", "m4_ghost", "ak47_grid", "ak47_ghost",
+        "1911_grid", "1911_ghost", "akshorty_grid", "akshorty_ghost", "ar9_grid", "ar9_ghost",
+        "ump_grid", "ump_ghost", "aug_grid", "aug_ghost", "awp_grid", "awp_ghost", "de_grid",
+        "de_ghost", "autosniper_grid", "autosniper_ghost", "galil_grid", "galil_ghost",
+        "glock_grid", "glock_ghost", "huntingrifle_grid", "huntingrifle_ghost", "knife_grid",
+        "knife_ghost_generic", "kriss_grid", "kriss_ghost", "m9_grid", "m9_ghost", "revolver_grid",
+        "revolver_ghost", "m16_grid", "m16_ghost", "vanas_grid", "vanas_ghost", "cet9_grid",
+        "cet9_ghost", "supp_rifle_grid", "supp_rifle_ghost", "holo_grid", "holo_ghost", "p90_grid",
+        "p90_ghost"
+    ]
+}
