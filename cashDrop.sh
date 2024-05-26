@@ -3,9 +3,9 @@
 # Load environment variables from .env file
 export $(grep -v '^#' /path/to/your/.env | xargs)
 
-DIRECTORY="~/pavlovserver008/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata"
+DIRECTORY="/home/shack/pavlovserver008/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata"
 WEBHOOK_URL="$DISCORD_WEBHOOK_URL"
-CONFIG_FILE="~/pavlovserver008/Pavlov/Saved/Config/ModSave/cash_config.json"  # Path to the configuration file
+CONFIG_FILE="/home/shack/pavlovserver008/Pavlov/Saved/Config/ModSave/cash_config.json"  # Path to the configuration file
 MESSAGE="SKIN MENU CASH DROP"
 
 # Read the cash value from the configuration file
