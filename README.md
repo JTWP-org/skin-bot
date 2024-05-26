@@ -102,10 +102,7 @@ Here are some planned features for future development:
     Achievements: Implement an achievements system to reward players for specific actions.
     In-Game Events: Create special in-game events with unique rewards.
 
-Security Considerations
-
-Ensure sensitive information such as tokens and user IDs are kept secure. Do not share or commit these details to public repositories.
-Troubleshooting
+TROUBLESHOOTING
 
     Bot Not Responding: Ensure the bot token is correct and the bot has permissions to read and send messages in the channel.
     Crontab Issues: Verify the cron job is set up correctly and the paths in the update_crontab.sh script are accurate.
