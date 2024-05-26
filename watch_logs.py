@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Path to the server log file and player data directory
-LOG_FILE_PATH = '~/pavlovserver008/Pavlov/Saved/Logs/Pavlov.log'
-PLAYER_DATA_DIR = '~/pavlovserver008/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata'
+LOG_FILE_PATH = '~/pavlovserver/Pavlov/Saved/Logs/Pavlov.log'
+PLAYER_DATA_DIR = '~/pavlovserver/Pavlov/Saved/Config/ModSave/WeaponSkinPack/playerdata'
 WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK_URL')
 
 #REQURMENT OF LUUCKY STEAL;
