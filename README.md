@@ -101,6 +101,7 @@ Here are some planned features for future development:
     Item Trading: Allow users to trade items with each other.
     Achievements: Implement an achievements system to reward players for specific actions.
     In-Game Events: Create special in-game events with unique rewards.
+    award for getting all 25 ghost  items 
 
 TROUBLESHOOTING
 
