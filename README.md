@@ -1,116 +1,108 @@
-Installation Instructions
+README
+Overview
+
+This project is a Discord bot for managing virtual cash and items for players in a game server. The bot provides various commands to manage user data, perform cash drops, and more.
+Features
+
+    Cash Management: Set and reset user cash values.
+    Item Management: Give and remove items for users.
+    Cash Drops: Perform automated cash drops for eligible users.
+    Activity Monitoring: Track user activity based on log file events.
+    Luck Mechanism: Implement a luck-based system for stealing items.
+    Webhook Integration: Send notifications to a Discord channel via webhook.
+
 Prerequisites
 
-    Python 3.8+: Ensure you have Python 3.8 or later installed.
-    pip: Ensure you have pip installed.
-    git: Ensure you have git installed.
-    jq: Ensure you have jq installed.
+    Python 3.10+
+    Discord bot token
+    A valid items.json file with item definitions
+    A valid cash_config.json file with cash drop configuration
 
+Installation
 
-install pipenv 
-```
-apt install python3.10-venv
-```
-Step 1: Clone the Repository
+    Clone the Repository
 
-Clone the repository from GitHub to your local machine:
+    bash
 
-
-
-```
-git clone https://github.com/JTWP-org/skin-bot.git
+git clone https://github.com/yourusername/skin-bot.git
 cd skin-bot
-```
 
-Step 2: Create and Activate a Virtual Environment
+Create a Virtual Environment
 
-Create and activate a Python virtual environment:
+bash
 
-```
 python3 -m venv venv
-source venv/bin/activate 
-```
-Step 3: Install Python Dependencies
-```
+source venv/bin/activate
+
+Install Dependencies
+
+bash
+
 pip install -r requirements.txt
-```
 
-Step 4: Configure Environment Variables
+Set Up Environment Variables
+Create a .env file in the project directory with the following content:
 
-Create a .env file in the root directory of your project and add the following environment variables:
-```
-nano .env
-```
-```
-DISCORD_BOT_TOKEN=your_discord_bot_token
-```
-Replace your_discord_bot_token with actual Discord bot token .
+env
 
-<p>Step 5: Configure Crontab (Optional)
-If you want to set up automated cash drops, you can configure a cron job. Update the update_crontab.sh script as needed and make it executable:</p>
+    DISCORD_BOT_TOKEN=your_discord_bot_token
+    BOT_VERSION=1.0.0
+    BOT_URL=https://JTWP.org
+    DISCORD_WEBHOOK_URL=your_discord_webhook_url
 
-inside the file update_crontab.sh you need to set the correct full path 
+    Ensure Configuration Files Exist
+        items.json: Contains item definitions.
+        cash_config.json: Contains cash drop configuration.
 
-```
-CONFIG_FILE="/home/shack/skin-bot/cash_config.json"
-DROP_SCRIPT="/home/shack/skin-bot/cashDrop.sh"
-```
+Configuration Files
+items.json
 
+json
 
+{
+    "ghost_items": [
+        "knife_ghost", "57_ghost", "m4_ghost", "ak47_ghost", "1911_ghost", "akshorty_ghost",
+        "ar9_ghost", "ump_ghost", "aug_ghost", "awp_ghost", "de_ghost", "autosniper_ghost",
+        "galil_ghost", "glock_ghost", "huntingrifle_ghost", "knife_ghost_generic", "kriss_ghost",
+        "m9_ghost", "revolver_ghost", "m16_ghost", "vanas_ghost", "cet9_ghost", "supp_rifle_ghost",
+        "holo_ghost", "p90_ghost"
+    ],
+    "all_items": [
+        // Add all other items here...
+    ]
+}
 
-#BE sure to update path here use a full path too not ~
-```
-chmod +x update_crontab.sh
-./update_crontab.sh
-```
+cash_config.json
 
-Running the Bot and Log Watcher
-Step 1: Start the Log Watcher
-```
-python watch_logs.py
-```
-```
-python bot.py
-```
+json
 
-<hr>
-Bot Commands
+{
+    "cash_value": 1000,
+    "drop_interval_hours": 24
+}
 
-Here are the available bot commands:
+Usage
 
-    !setcash <value>: Set the cash drop value.
-    !setluck <value>: Set the luck percentage for stealing items.
-    !drop: Run the cash drop script manually.
-    !setinterval <hours>: Set the interval for automated cash drops.
-    !resetcash: Reset all user cash values to 0.
-    !giveitem <user_id> <item>: Give an item to a user.
-    !resetusercash <user_id>: Reset a user's cash to 0.
-    !listusers: List all users with their details.
-    !removeitem <user_id> <item>: Remove an item from a user.
-    !removeitems <user_id>: Remove all items from a user.
+    Start the Bot and Log Watcher
 
-Cash Loss System
+    bash
 
-The cash loss system works as follows:
+    ./start_services.sh
 
-    -100: Lose 100 cash on death by another team member.
-    -300: Lose 300 cash on self-kill.
-    -500: Lose 500 cash if killed by a knife.
-    +500: Gain 500 cash if you kill another team member with a knife.
+    Bot Commands
+        !setcash <amount>: Set the cash value for drops.
+        !setluck <percentage>: Set the luck percentage for item stealing.
+        !drop: Perform a cash drop for eligible users.
+        !setinterval <hours>: Set the interval for cash drops.
+        !resetcash: Reset all user cash values to 0.
+        !giveitem <user_id> <item>: Give an item to a user.
+        !resetusercash <user_id>: Reset a user's cash to 0.
+        !listusers: List all users with their data.
+        !removeitem <user_id> <item>: Remove an item from a user.
+        !removeitems <user_id>: Remove all items from a user.
 
 Planned Features
 
-Here are some planned features for future development:
-
-    Enhanced Statistics: Track additional player statistics such as total playtime, accuracy, and more.
-    Leaderboard: Create a leaderboard to display top players based on various metrics.
-    Item Trading: Allow users to trade items with each other.
-    Achievements: Implement an achievements system to reward players for specific actions.
-    In-Game Events: Create special in-game events with unique rewards.
-    award for getting all 25 ghost  items 
-
-TROUBLESHOOTING
-
-    Bot Not Responding: Ensure the bot token is correct and the bot has permissions to read and send messages in the channel.
-    Crontab Issues: Verify the cron job is set up correctly and the paths in the update_crontab.sh script are accurate.
-    Log Watcher Issues: Ensure the log file path is correct and the script has read permissions for the log file.
+    Enhanced Activity Tracking: Track additional user activities and provide more detailed reports.
+    Leaderboard: Display a leaderboard of users based on cash and items.
+    More Detailed Logging: Improve logging to capture more events and details.
