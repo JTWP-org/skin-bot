@@ -6,6 +6,11 @@ Prerequisites
     git: Ensure you have git installed.
     jq: Ensure you have jq installed.
 
+
+install pipenv 
+```
+apt install python3.10-venv
+```
 Step 1: Clone the Repository
 
 Clone the repository from GitHub to your local machine:
