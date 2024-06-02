@@ -14,7 +14,7 @@ Clone the repository from GitHub to your local machine:
 
 ```
 git clone https://github.com/JTWP-org/skin-bot.git
-cd your-repository
+cd skin-bot
 ```
 
 Step 2: Create and Activate a Virtual Environment
