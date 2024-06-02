@@ -43,16 +43,24 @@ nano .env
 ```
 ```
 DISCORD_BOT_TOKEN=your_discord_bot_token
-DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/your_webhook_url
 ```
-Replace your_discord_bot_token and your_webhook_url with your actual Discord bot token and webhook URL.
-Step 5: Configure Crontab (Optional)
+Replace your_discord_bot_token with actual Discord bot token .
 
-If you want to set up automated cash drops, you can configure a cron job. Update the update_crontab.sh script as needed and make it executable:
+<p>Step 5: Configure Crontab (Optional)
+If you want to set up automated cash drops, you can configure a cron job. Update the update_crontab.sh script as needed and make it executable:</p>
+
+inside the file update_crontab.sh you need to set the correct full path 
+
+```
+CONFIG_FILE="/home/shack/skin-bot/cash_config.json"
+DROP_SCRIPT="/home/shack/skin-bot/cashDrop.sh"
+```
+
+
 
 #BE sure to update path here use a full path too not ~
 ```
-chmod +x /path/to/your/update_crontab.sh
+chmod +x update_crontab.sh
 ./update_crontab.sh
 ```
 
