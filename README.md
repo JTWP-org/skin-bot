@@ -10,64 +10,57 @@ Step 1: Clone the Repository
 
 Clone the repository from GitHub to your local machine:
 
-sh
 
-git clone https://github.com/yourusername/your-repository.git
+
+```
+git clone https://github.com/JTWP-org/skin-bot.git
 cd your-repository
+```
 
 Step 2: Create and Activate a Virtual Environment
 
 Create and activate a Python virtual environment:
 
-sh
-
+```
 python3 -m venv venv
 source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-
+```
 Step 3: Install Python Dependencies
-
-Install the required Python packages:
-
-sh
-
+```
 pip install -r requirements.txt
+```
 
 Step 4: Configure Environment Variables
 
 Create a .env file in the root directory of your project and add the following environment variables:
-
-sh
-
+```
+nano .env
+```
+```
 DISCORD_BOT_TOKEN=your_discord_bot_token
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/your_webhook_url
-
+```
 Replace your_discord_bot_token and your_webhook_url with your actual Discord bot token and webhook URL.
 Step 5: Configure Crontab (Optional)
 
 If you want to set up automated cash drops, you can configure a cron job. Update the update_crontab.sh script as needed and make it executable:
 
-sh
-
+#BE sure to update path here use a full path too not ~
+```
 chmod +x /path/to/your/update_crontab.sh
 ./update_crontab.sh
+```
 
 Running the Bot and Log Watcher
 Step 1: Start the Log Watcher
-
-Start the log watcher to monitor the game logs:
-
-sh
-
+```
 python watch_logs.py
-
-Step 2: Start the Discord Bot
-
-In a separate terminal, start the Discord bot:
-
-sh
-
+```
+```
 python bot.py
+```
 
+<hr>
 Bot Commands
 
 Here are the available bot commands:
