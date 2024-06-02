@@ -23,7 +23,7 @@ Create and activate a Python virtual environment:
 
 ```
 python3 -m venv venv
-source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+source venv/bin/activate 
 ```
 Step 3: Install Python Dependencies
 ```
